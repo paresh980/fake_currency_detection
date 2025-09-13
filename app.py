@@ -5,21 +5,13 @@ import cv2
 import numpy as np
 from werkzeug.utils import secure_filename
 
-# -----------------------------
-# Flask setup
-# -----------------------------
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
-# -----------------------------
-# Load trained model
-# -----------------------------
+
 model = load_model("currency_detector_final.h5")
 class_names = ["real", "fake"]
 
-# -----------------------------
-# Preprocess image
-# -----------------------------
 def preprocess_image(img_path, img_size=(224,224)):
     img = cv2.imread(img_path)
     img = cv2.resize(img, img_size)
@@ -27,9 +19,6 @@ def preprocess_image(img_path, img_size=(224,224)):
     img = np.expand_dims(img, axis=0)
     return img
 
-# -----------------------------
-# Routes
-# -----------------------------
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -56,14 +45,12 @@ def predict():
     confidence = round(float(pred[0][class_index]*100), 2)
     prediction = class_names[class_index]
 
-    # Render template with result
+    
     return render_template('index.html',
                            prediction=prediction,
                            confidence=confidence,
                            image_name=filename)
 
-# -----------------------------
-# Run app
-# -----------------------------
 if __name__ == '__main__':
     app.run(debug=True)
+
